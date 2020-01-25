@@ -4,7 +4,7 @@ using ZeroScope;
 namespace ZeroScopeTests
 {
     [TestClass]
-    public class ReferenceMOACalculatorTests
+    public class MOACalculatorTests
     {
         [DataTestMethod]
         [DataRow(100.0, 1.047, 1.0)]
@@ -13,7 +13,7 @@ namespace ZeroScopeTests
         [DataRow(100.0, -1.047, -1.0)]
         public void CalculatesMOA(double distanceToTarget, double distanceFromCenter, double expected)
         {
-            var calculator = new ReferenceMOACalculator();
+            var calculator = new MOACalculator();
 
             var output = calculator.Calculate((decimal)distanceToTarget, (decimal)distanceFromCenter);
 

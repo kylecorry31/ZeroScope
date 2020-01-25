@@ -1,4 +1,5 @@
 ﻿using System;
+using ZeroScope.UI;
 
 namespace ZeroScope
 {
@@ -6,33 +7,27 @@ namespace ZeroScope
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter target distance in yards: ");
-            var distanceToTarget = Decimal.Parse(Console.ReadLine());
-            Console.WriteLine();
+            var shotInfoRetriever = new ConsoleShotInfoRetriever();
+            var scopeInfoRetriever = new ConsoleScopeInfoRetriever();
 
-            Console.Write("Enter the shot's distance from center in inches: ");
-            var distanceFromCenter = Decimal.Parse(Console.ReadLine());
-            Console.WriteLine();
+            var shot = shotInfoRetriever.GetShotInfo();
+            var scope = scopeInfoRetriever.GetScopeInfo();
 
-            Console.Write("Enter the scope's MOA per click: ");
-            var scopeMOAPerClick = Decimal.Parse(Console.ReadLine());
-            Console.WriteLine();
+            IScopeAdjuster scopeAdjuster = new ScopeAdjuster();
 
+            var adjustment = scopeAdjuster.Calculate(scope, shot);
 
-            IMOACalculator moaCalculator = new ReferenceMOACalculator();
-            IMOAToClickConverter clickConverter = new ScopeMOAToClickConverter(scopeMOAPerClick);
-            IScopeAdjuster scopeAdjuster = new ScopeAdjuster(moaCalculator, clickConverter);
-
-            var shotMOA = moaCalculator.Calculate(distanceToTarget, distanceFromCenter);
-            var scopeAdjustment = scopeAdjuster.Calculate(distanceToTarget, distanceFromCenter);
-
-            Console.WriteLine($"Shot: { Math.Round(shotMOA, 2) } MOA");
-
-            if (scopeAdjustment != 0.0M)
+            if (adjustment.VerticalDirection != Direction.None)
             {
-                Console.WriteLine($"Adjustment recommended: { Math.Abs(scopeAdjustment) } clicks in the opposite direction as the shot.");
-            } 
-            else
+                Console.WriteLine($"Adjustment recommended: { Math.Abs(adjustment.VerticalClicks) } clicks { adjustment.VerticalDirection.ToString().ToLower() }");
+            }
+
+            if (adjustment.HorizontalDirection != Direction.None)
+            {
+                Console.WriteLine($"Adjustment recommended: { Math.Abs(adjustment.HorizontalClicks) } clicks { adjustment.HorizontalDirection.ToString().ToLower() }");
+            }
+
+            if (adjustment.VerticalDirection == Direction.None && adjustment.HorizontalDirection == Direction.None)
             {
                 Console.WriteLine("No adjustment recommended");
             }

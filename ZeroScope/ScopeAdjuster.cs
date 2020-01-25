@@ -5,19 +5,44 @@ namespace ZeroScope
     public class ScopeAdjuster : IScopeAdjuster
     {
 
-        private readonly IMOACalculator MOACalculator;
-        private readonly IMOAToClickConverter ClickConverter;
-
-        public ScopeAdjuster(IMOACalculator moaCalculator, IMOAToClickConverter clickConverter)
+        public ScopeAdjustment Calculate(ScopeInfo scope, ShotInfo shot)
         {
-            MOACalculator = moaCalculator;
-            ClickConverter = clickConverter;
-        }
+            var calculator = new MOACalculator();
 
-        public decimal Calculate(decimal distanceToTarget, decimal distanceFromCenter)
-        {
-            var shotMOA = MOACalculator.Calculate(distanceToTarget, distanceFromCenter);
-            return ClickConverter.Convert(shotMOA);
+            var horizontalMOA = calculator.Calculate(shot.ShootingDistance, shot.HorizontalBulletOffset);
+            var verticalMOA = calculator.Calculate(shot.ShootingDistance, shot.VerticalBulletOffset);
+
+            var horizontalClicks = Math.Round(horizontalMOA / scope.HorizontalMOAPerClick);
+            var verticalClicks = Math.Round(verticalMOA / scope.VerticalMOAPerClick);
+
+            var horizontalDirection = Direction.None;
+            if (horizontalClicks < 0)
+            {
+                horizontalDirection = Direction.Right;
+            }
+            else if (horizontalClicks > 0)
+            {
+                horizontalDirection = Direction.Left;
+            }
+
+            var verticalDirection = Direction.None;
+            if (verticalClicks < 0)
+            {
+                verticalDirection = Direction.Up;
+            }
+            else if (verticalClicks > 0)
+            {
+                verticalDirection = Direction.Down;
+            }
+
+            return new ScopeAdjustment
+            {
+                HorizontalClicks = horizontalClicks,
+                HorizontalDirection = horizontalDirection,
+                VerticalClicks = verticalClicks,
+                VerticalDirection = verticalDirection
+            };
+
         }
     }
 }

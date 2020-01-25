@@ -3,7 +3,7 @@
     public interface IScopeAdjuster
     {
 
-        decimal Calculate(decimal distanceToTarget, decimal distanceFromCenter);
+        ScopeAdjustment Calculate(ScopeInfo scope, ShotInfo shot);
 
     }
 }
