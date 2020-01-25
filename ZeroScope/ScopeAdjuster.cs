@@ -37,9 +37,9 @@ namespace ZeroScope
 
             return new ScopeAdjustment
             {
-                HorizontalClicks = horizontalClicks,
+                HorizontalClicks = Math.Abs(horizontalClicks),
                 HorizontalDirection = horizontalDirection,
-                VerticalClicks = verticalClicks,
+                VerticalClicks = Math.Abs(verticalClicks),
                 VerticalDirection = verticalDirection
             };
 
