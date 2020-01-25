@@ -21,17 +21,16 @@ namespace ZeroScope
 
             IMOACalculator moaCalculator = new ReferenceMOACalculator();
             IMOAToClickConverter clickConverter = new ScopeMOAToClickConverter(scopeMOAPerClick);
+            IScopeAdjuster scopeAdjuster = new ScopeAdjuster(moaCalculator, clickConverter);
 
             var shotMOA = moaCalculator.Calculate(distanceToTarget, distanceFromCenter);
-            var clickAdjustmentNeeded = clickConverter.Convert(shotMOA);
-
-            var clickDirection = clickAdjustmentNeeded < 0 ? "down" : "up";
+            var scopeAdjustment = scopeAdjuster.Calculate(distanceToTarget, distanceFromCenter);
 
             Console.WriteLine($"Shot: { Math.Round(shotMOA, 2) } MOA");
 
-            if (clickAdjustmentNeeded != 0M)
+            if (scopeAdjustment != 0.0M)
             {
-                Console.WriteLine($"Adjustment recommended: { Math.Abs(clickAdjustmentNeeded) } clicks { clickDirection }");
+                Console.WriteLine($"Adjustment recommended: { Math.Abs(scopeAdjustment) } clicks in the opposite direction as the shot.");
             } 
             else
             {
