@@ -7,8 +7,21 @@ namespace ZeroScope
     {
         static void Main(string[] args)
         {
-            var shotInfoRetriever = new ConsoleShotInfoRetriever();
-            var scopeInfoRetriever = new ConsoleScopeInfoRetriever();
+            IShotInfoRetriever shotInfoRetriever;
+            IScopeInfoRetriever scopeInfoRetriever;
+
+            if (args.Length > 0)
+            {
+                shotInfoRetriever = new ArgsShotInfoRetriever(args);
+                scopeInfoRetriever = new ArgsScopeInfoRetriever(args);
+            }
+            else
+            {
+                shotInfoRetriever = new ConsoleShotInfoRetriever();
+                scopeInfoRetriever = new ConsoleScopeInfoRetriever();
+            }
+
+            
 
             var shot = shotInfoRetriever.GetShotInfo();
             var scope = scopeInfoRetriever.GetScopeInfo();
